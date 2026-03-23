@@ -376,12 +376,28 @@ thead th{
 .account-input{
   background:transparent;border:none;
   color:var(--text);font-family:var(--mono);font-size:12px;
-  padding:4px 8px;width:140px;
+  padding:4px 8px;width:120px;
   border-bottom:1px solid var(--border2);
   transition:border-color .2s;
 }
 .account-input:focus{outline:none;border-color:var(--accent);}
 .account-input::placeholder{color:var(--muted);}
+.job-select{
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--mono);font-size:11px;
+  padding:4px 8px;border-radius:var(--r);
+  width:190px;cursor:pointer;
+  transition:border-color .2s;
+}
+.job-select:focus{outline:none;border-color:var(--accent);}
+.job-select option{background:var(--surface2);}
+.btn-job-del{
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:11px;padding:2px 6px;
+  transition:color .15s;
+}
+.btn-job-del:hover{color:var(--red);}
+.job-area{display:none;align-items:center;gap:8px;}
 .btn-cloud{
   padding:5px 12px;border-radius:var(--r);
   border:1px solid var(--border2);background:var(--surface2);
@@ -415,9 +431,17 @@ thead th{
   <div class="sep"></div>
   <input id="projectName" class="project-name" type="text" placeholder="Project name…">
   <div class="sep"></div>
-  <input id="accountName" class="account-input" type="text" placeholder="Account ID…" title="Enter account name to sync across devices">
+  <input id="accountName" class="account-input" type="text" placeholder="Account…" title="Enter account name to sync across devices">
   <button class="btn-cloud" id="connectBtn" onclick="connectAccount()">Connect</button>
   <div class="cloud-status disconnected" id="cloudStatus">○ offline</div>
+  <div class="sep" id="jobSep" style="display:none"></div>
+  <div class="job-area" id="jobArea">
+    <select class="job-select" id="jobSelect" onchange="switchJob(this.value)">
+      <option value="">— select job —</option>
+    </select>
+    <button class="btn-cloud" onclick="newJob()">+ Job</button>
+    <button class="btn-job-del" id="delJobBtn" title="Delete current job" onclick="deleteJob()" style="display:none">✕</button>
+  </div>
   <div class="topbar-right">
     <span class="save-dot idle" id="saveIndicator">● IDLE</span>
   </div>
@@ -942,13 +966,14 @@ const firebaseConfig = {
   projectId: "banner-tracker",
   storageBucket: "banner-tracker.firebasestorage.app",
   messagingSenderId: "703693065783",
-  appId: "1:703693065783:web:401c45a8cc95898fceb9b2",
+  appId: "1:703696065783:web:401c45a8cc95898fceb9b2",
   measurementId: "G-227HW6GFQY"
 };
 
 let db = null;
 let cloudEnabled = false;
 let currentAccount = '';
+let currentJob = '';   // doc ID inside jobs subcollection
 
 try {
   firebase.initializeApp(firebaseConfig);
@@ -958,101 +983,214 @@ try {
   console.warn('Firebase init failed:', e);
 }
 
-// Restore last account from localStorage
-(function(){
-  const saved = localStorage.getItem('bannerTracker_account');
-  if(saved){
-    document.getElementById('accountName').value = saved;
-    // auto-connect silently
-    _activateAccount(saved);
-  }
-})();
+// ── HELPERS ───────────────────────────────────────────────────
+function jobsCol(){ return db.collection('bannerTracker').doc(currentAccount).collection('jobs'); }
+function jobDoc(id){ return jobsCol().doc(id); }
+function slugify(s){ return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function freshState(name){
+  return { projectName: name||'', minsPerBanner:40, fillHours:0, languages:[], products:[], matrix:{} };
+}
 
-function setCloudStatus(state, label){
+// ── CLOUD STATUS ──────────────────────────────────────────────
+function setCloudStatus(state){
   const el = document.getElementById('cloudStatus');
   el.className = 'cloud-status ' + state;
   el.textContent = {
     disconnected: '○ offline',
     connecting:   '◌ connecting…',
-    connected:    '● ' + (currentAccount || 'connected'),
+    connected:    '● ' + currentAccount,
     error:        '✕ error'
-  }[state] || label;
-  const on = (state === 'connected');
+  }[state] || state;
+}
+
+function setSaveLoad(on){
   document.getElementById('saveCloudBtn').disabled = !on;
   document.getElementById('loadCloudBtn').disabled = !on;
 }
 
+// ── ACCOUNT CONNECT ───────────────────────────────────────────
 function connectAccount(){
   const name = document.getElementById('accountName').value.trim();
   if(!name){ toast('Enter an account name first'); return; }
-  if(name.length < 3){ toast('Account name min 3 characters'); return; }
+  if(name.length < 2){ toast('Account name min 2 characters'); return; }
   _activateAccount(name);
 }
 
-function _activateAccount(name){
+async function _activateAccount(name){
   if(!cloudEnabled){ toast('Firebase unavailable'); return; }
   currentAccount = name;
   localStorage.setItem('bannerTracker_account', name);
   setCloudStatus('connecting');
-  // test connection with a quick get
-  db.collection('bannerTracker').doc(name).get()
-    .then(()=>{ setCloudStatus('connected'); toast('Connected: ' + name); })
-    .catch(()=>{ setCloudStatus('error'); toast('Connection failed'); });
-}
-
-async function saveToCloud(){
-  if(!cloudEnabled || !currentAccount){ toast('Not connected'); return; }
-  // Sync config fields into S before saving
-  S.projectName   = document.getElementById('projectName').value;
-  S.minsPerBanner = parseInt(document.getElementById('minsInput').value)||40;
-  S.fillHours     = parseFloat(document.getElementById('fillInput').value)||0;
-
-  const ind = document.getElementById('saveIndicator');
-  ind.textContent = '● SAVING…'; ind.className = 'save-dot saving';
   try {
-    await db.collection('bannerTracker').doc(currentAccount).set({
-      ...S,
-      _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    ind.textContent = '● CLOUD SAVED'; ind.className = 'save-dot saved';
-    toast('☁ Saved to cloud — ' + currentAccount);
+    // ensure account doc exists
+    await db.collection('bannerTracker').doc(name).set({ _createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    setCloudStatus('connected');
+    toast('Connected: ' + name);
+    await loadJobList();
   } catch(e) {
-    ind.textContent = '● ERROR'; ind.className = 'save-dot idle';
-    toast('Save failed: ' + e.message);
+    setCloudStatus('error');
+    toast('Connection failed');
     console.error(e);
   }
 }
 
-async function loadFromCloud(){
+// ── JOB LIST ──────────────────────────────────────────────────
+async function loadJobList(){
+  const snap = await jobsCol().orderBy('_updatedAt','desc').get().catch(()=>null);
+  const sel = document.getElementById('jobSelect');
+  sel.innerHTML = '<option value="">— select job —</option>';
+  if(snap) snap.forEach(doc=>{
+    const opt = document.createElement('option');
+    opt.value = doc.id;
+    opt.textContent = doc.data().projectName || doc.id;
+    sel.appendChild(opt);
+  });
+  // show job area
+  document.getElementById('jobSep').style.display = '';
+  document.getElementById('jobArea').style.display = 'flex';
+  setSaveLoad(false);
+  // restore last job for this account
+  const lastJob = localStorage.getItem('bannerTracker_job_' + currentAccount);
+  if(lastJob && sel.querySelector(`option[value="${lastJob}"]`)){
+    sel.value = lastJob;
+    await switchJob(lastJob, true);
+  }
+}
+
+// ── SWITCH JOB ────────────────────────────────────────────────
+async function switchJob(jobId, silent){
+  if(!jobId){ setSaveLoad(false); document.getElementById('delJobBtn').style.display='none'; return; }
+  currentJob = jobId;
+  localStorage.setItem('bannerTracker_job_' + currentAccount, jobId);
+  document.getElementById('delJobBtn').style.display = '';
+  setSaveLoad(true);
+  await loadFromCloud(silent);
+}
+
+// ── NEW JOB ───────────────────────────────────────────────────
+async function newJob(){
+  if(!currentAccount){ toast('Connect an account first'); return; }
+  const name = prompt('Job name (e.g. Miele Outdoor Cooking):');
+  if(!name || !name.trim()) return;
+  const id = slugify(name) || ('job-' + Date.now());
+  const ns = freshState(name.trim());
+  try {
+    await jobDoc(id).set({ ...ns, _updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    // update select list
+    const sel = document.getElementById('jobSelect');
+    // add option if not exists
+    if(!sel.querySelector(`option[value="${id}"]`)){
+      const opt = document.createElement('option');
+      opt.value = id; opt.textContent = name.trim();
+      sel.appendChild(opt);
+    }
+    sel.value = id;
+    currentJob = id;
+    localStorage.setItem('bannerTracker_job_' + currentAccount, id);
+    S = ns;
+    document.getElementById('projectName').value = S.projectName;
+    document.getElementById('minsInput').value   = S.minsPerBanner;
+    document.getElementById('fillInput').value   = S.fillHours;
+    document.getElementById('delJobBtn').style.display = '';
+    setSaveLoad(true);
+    render();
+    toast('✚ New job: ' + name.trim());
+  } catch(e){
+    toast('Failed to create job: ' + e.message);
+  }
+}
+
+// ── DELETE JOB ────────────────────────────────────────────────
+async function deleteJob(){
+  if(!currentJob){ return; }
+  const sel = document.getElementById('jobSelect');
+  const label = sel.options[sel.selectedIndex]?.textContent || currentJob;
+  if(!confirm(`Delete job "${label}"?\nThis cannot be undone.`)) return;
+  try {
+    await jobDoc(currentJob).delete();
+    sel.querySelector(`option[value="${currentJob}"]`)?.remove();
+    currentJob = '';
+    sel.value = '';
+    document.getElementById('delJobBtn').style.display = 'none';
+    setSaveLoad(false);
+    S = freshState('');
+    document.getElementById('projectName').value = '';
+    document.getElementById('minsInput').value   = 40;
+    document.getElementById('fillInput').value   = 0;
+    render();
+    toast('Job deleted');
+  } catch(e){
+    toast('Delete failed: ' + e.message);
+  }
+}
+
+// ── SAVE TO CLOUD ─────────────────────────────────────────────
+async function saveToCloud(){
   if(!cloudEnabled || !currentAccount){ toast('Not connected'); return; }
+  if(!currentJob){ toast('Select or create a job first'); return; }
+  S.projectName   = document.getElementById('projectName').value;
+  S.minsPerBanner = parseInt(document.getElementById('minsInput').value)||40;
+  S.fillHours     = parseFloat(document.getElementById('fillInput').value)||0;
+  const ind = document.getElementById('saveIndicator');
+  ind.textContent = '● SAVING…'; ind.className = 'save-dot saving';
+  try {
+    // sync job display name in select
+    const sel = document.getElementById('jobSelect');
+    const opt = sel.querySelector(`option[value="${currentJob}"]`);
+    if(opt && S.projectName) opt.textContent = S.projectName;
+    await jobDoc(currentJob).set({
+      ...S,
+      _updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    ind.textContent = '● CLOUD SAVED'; ind.className = 'save-dot saved';
+    toast('☁ Saved — ' + (S.projectName || currentJob));
+  } catch(e) {
+    ind.textContent = '● ERROR'; ind.className = 'save-dot idle';
+    toast('Save failed: ' + e.message);
+  }
+}
+
+// ── LOAD FROM CLOUD ───────────────────────────────────────────
+async function loadFromCloud(silent){
+  if(!cloudEnabled || !currentAccount){ toast('Not connected'); return; }
+  if(!currentJob){ toast('Select a job first'); return; }
   const ind = document.getElementById('saveIndicator');
   ind.textContent = '● LOADING…'; ind.className = 'save-dot saving';
   try {
-    const doc = await db.collection('bannerTracker').doc(currentAccount).get();
-    if(!doc.exists){ toast('No cloud data for: ' + currentAccount); ind.textContent='● IDLE'; return; }
+    const doc = await jobDoc(currentJob).get();
+    if(!doc.exists){
+      if(!silent) toast('No data for this job yet');
+      ind.textContent = '● IDLE'; ind.className = 'save-dot idle';
+      return;
+    }
     const data = doc.data();
-    // Merge into S — guard against missing fields
     S.projectName   = data.projectName   || '';
     S.minsPerBanner = data.minsPerBanner || 40;
     S.fillHours     = data.fillHours     || 0;
     S.languages     = data.languages     || [];
     S.products      = data.products      || [];
     S.matrix        = data.matrix        || {};
-    // Update inputs
     document.getElementById('projectName').value = S.projectName;
     document.getElementById('minsInput').value   = S.minsPerBanner;
     document.getElementById('fillInput').value   = S.fillHours;
-    // Also update localStorage
     try{ localStorage.setItem('bannerTracker_v2', JSON.stringify(S)); }catch(e){}
     render();
-    ind.textContent = '● CLOUD LOADED'; ind.className = 'save-dot saved';
-    toast('↓ Loaded from cloud — ' + currentAccount);
+    ind.textContent = '● LOADED'; ind.className = 'save-dot saved';
+    if(!silent) toast('↓ Loaded — ' + (S.projectName || currentJob));
   } catch(e) {
     ind.textContent = '● ERROR'; ind.className = 'save-dot idle';
     toast('Load failed: ' + e.message);
-    console.error(e);
   }
 }
+
+// ── AUTO-CONNECT ON INIT ──────────────────────────────────────
+(function(){
+  const saved = localStorage.getItem('bannerTracker_account');
+  if(saved){
+    document.getElementById('accountName').value = saved;
+    _activateAccount(saved);
+  }
+})();
 
 // Enter key on account input triggers connect
 document.getElementById('accountName').addEventListener('keydown', e=>{
