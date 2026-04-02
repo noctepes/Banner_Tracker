@@ -414,6 +414,7 @@ thead th{
 .td-stat-cell.muted  {color:#8090b2;font-size:10px;}
 .td-stat-cell.green  {color:var(--green);font-weight:600;font-size:13px;}
 .td-stat-cell.red    {color:var(--red);font-weight:600;font-size:13px;}
+.td-stat-cell.over   {color:var(--accent);font-weight:700;font-size:12px;}
 
 /* fill input cell */
 .td-fill-cell{background:var(--bg);text-align:center;}
@@ -456,8 +457,9 @@ thead th{
 .td-total-stat.accent {color:var(--accent);font-size:15px;}
 .td-total-stat.blue   {color:var(--blue);}
 .td-total-stat.muted  {color:#8090b2;font-size:11px;font-weight:400;}
-.td-total-stat.green  {color:var(--green);font-size:15px;}
-.td-total-stat.red    {color:var(--red);font-size:15px;}
+.td-total-stat.green  {color:var(--green);}
+.td-total-stat.red    {color:var(--red);}
+.td-total-stat.over   {color:var(--accent);font-size:12px;font-weight:700;}
 
 /* ── MODAL ── */
 .modal-bg{
@@ -570,10 +572,10 @@ thead th{
         <div class="stat-val green" id="sFill">0.00</div>
         <div class="sc-sub">hrs filled</div>
       </div>
-      <div class="sc c-red">
-        <div class="sc-lbl">Remaining</div>
+      <div class="sc c-red" id="sRemainCard">
+        <div class="sc-lbl" id="sRemainLbl">Remaining</div>
         <div class="stat-val red" id="sRemain">0.00</div>
-        <div class="sc-sub">hrs left</div>
+        <div class="sc-sub" id="sRemainSub">hrs left</div>
       </div>
     </div>
 
@@ -701,6 +703,26 @@ let S = {
 // total fill across all languages
 function totalFill(){ return S.languages.reduce((s,l)=>s+(S.fillByLang[l]||0),0); }
 
+// ── REMAIN/OVERRUN HELPER ──────────────────────────────────────
+// Returns { text, cls } for the "Remain" cell
+// States: no data '—' | remaining red | done green | overrun amber
+function remInfo(h, fl, hasData){
+  if(!hasData) return { text: '—', rowCls: '', totalCls: '' };
+  if(fl === 0 && h === 0) return { text: '—', rowCls: '', totalCls: '' };
+  if(fl > h){
+    const over = fl - h;
+    return {
+      text: '+' + over.toFixed(2) + ' over',
+      rowCls:   'over',
+      totalCls: 'over'
+    };
+  }
+  if(fl >= h){
+    return { text: '✓ done', rowCls: 'green', totalCls: 'green' };
+  }
+  return { text: (h - fl).toFixed(2), rowCls: 'red', totalCls: 'red' };
+}
+
 // ── HELPERS ────────────────────────────────────────────────────
 function qty(lang, prod){ return (S.matrix[lang] || {})[prod] || 0; }
 function setQty(lang, prod, v){ if(!S.matrix[lang]) S.matrix[lang]={}; S.matrix[lang][prod] = isNaN(v)||v<0?0:v; }
@@ -763,6 +785,7 @@ function renderBody(){
     const fl = S.fillByLang[lang] || 0;
     const rm = Math.max(0, h - fl);
     const remClass = rm <= 0 ? 'green' : 'red';
+    const ri = remInfo(h, fl, q > 0);
     b += `<tr class="tr-lang" data-li="${li}">
       <td class="td-lang-cell">
         <div class="lang-cell-inner">
@@ -782,7 +805,7 @@ function renderBody(){
         data-lang="${esc(lang)}"
         oninput="onFillInput(this)">
     </td>`;
-    b += `<td class="td-stat-cell ${remClass}" id="rrem-${li}">${q?(rm<=0?'✓ done':rm.toFixed(2)):'—'}</td>`;
+    b += `<td class="td-stat-cell ${ri.rowCls}" id="rrem-${li}">${ri.text}</td>`;
     S.products.forEach((prod,pi)=>{
       const v = qty(lang,prod);
       b += `<td class="td-qty-cell">
@@ -804,6 +827,7 @@ function renderFoot(){
   const td = th / 8;
   const tf = totalFill();
   const tr = Math.max(0, th - tf);
+  const tri = remInfo(th, tf, tq > 0);
   let f = `<tr class="tr-total">
     <td class="td-total-label">TOTAL</td>`;
   f += `<td class="td-total-stat quality" id="ft-quality">${tq.toLocaleString()}</td>`;
@@ -811,7 +835,7 @@ function renderFoot(){
   f += `<td class="td-total-stat accent"  id="ft-hours">${th.toFixed(2)}</td>`;
   f += `<td class="td-total-stat blue"    id="ft-days">${td.toFixed(2)}</td>`;
   f += `<td class="td-total-stat green"   id="ft-fill">${tf.toFixed(2)}</td>`;
-  f += `<td class="td-total-stat ${tr<=0?'green':'red'}" id="ft-remain">${tr<=0?'✓ done':tr.toFixed(2)}</td>`;
+  f += `<td class="td-total-stat ${tri.totalCls}" id="ft-remain">${tri.text}</td>`;
   S.products.forEach((p,i)=>{
     const cq = colQ(p);
     f += `<td class="td-total-qty" id="cq-${i}">${cq||'—'}</td>`;
@@ -839,8 +863,9 @@ function onQtyInput(inp){
   document.getElementById(`rh-${li}`).textContent   = q?h.toFixed(2):'—';
   document.getElementById(`rd-${li}`).textContent   = q?d.toFixed(2):'—';
   const remEl = document.getElementById(`rrem-${li}`);
-  remEl.textContent  = q?(rm<=0?'✓ done':rm.toFixed(2)):'—';
-  remEl.className    = `td-stat-cell ${rm<=0?'green':'red'}`;
+  const ri = remInfo(h, fl, q > 0);
+  remEl.textContent  = ri.text;
+  remEl.className    = `td-stat-cell ${ri.rowCls}`;
 
   const pi = S.products.indexOf(prod);
   const cqEl = document.getElementById(`cq-${pi}`);
@@ -858,8 +883,9 @@ function onQtyInput(inp){
   document.getElementById('ft-days').textContent    = td.toFixed(2);
   document.getElementById('ft-fill').textContent    = tf.toFixed(2);
   const ftRem = document.getElementById('ft-remain');
-  ftRem.textContent = tr<=0?'✓ done':tr.toFixed(2);
-  ftRem.className   = `td-total-stat ${tr<=0?'green':'red'}`;
+  const tri = remInfo(th2, tf, tq > 0);
+  ftRem.textContent = tri.text;
+  ftRem.className   = `td-total-stat ${tri.totalCls}`;
 
   updateStats();
   schedSave();
@@ -877,8 +903,9 @@ function onFillInput(inp){
   const h  = (q * S.minsPerBanner) / 60;
   const rm = Math.max(0, h - v);
   const remEl = document.getElementById(`rrem-${li}`);
-  remEl.textContent = q?(rm<=0?'✓ done':rm.toFixed(2)):'—';
-  remEl.className   = `td-stat-cell ${rm<=0?'green':'red'}`;
+  const ri = remInfo(h, v, q > 0);
+  remEl.textContent = ri.text;
+  remEl.className   = `td-stat-cell ${ri.rowCls}`;
 
   // update foot totals
   const tq  = totalQ();
@@ -887,8 +914,9 @@ function onFillInput(inp){
   const tr  = Math.max(0, th2 - tf);
   document.getElementById('ft-fill').textContent   = tf.toFixed(2);
   const ftRem = document.getElementById('ft-remain');
-  ftRem.textContent = tr<=0?'✓ done':tr.toFixed(2);
-  ftRem.className   = `td-total-stat ${tr<=0?'green':'red'}`;
+  const tri = remInfo(th2, tf, tq > 0);
+  ftRem.textContent = tri.text;
+  ftRem.className   = `td-total-stat ${tri.totalCls}`;
 
   updateStats();
   schedSave();
@@ -905,16 +933,33 @@ function updateStats(){
   const tf  = totalFill();
   const rem = Math.max(0, th - tf);
   const pct = th>0 ? Math.min(100,(tf/th)*100) : 0;
+  const isOver = tf > th && th > 0;
 
   document.getElementById('sQuality').textContent = tq.toLocaleString();
   document.getElementById('sMinutes').textContent = tm.toLocaleString();
   document.getElementById('sHours').textContent   = th.toFixed(2);
   document.getElementById('sDays').textContent    = td.toFixed(2)+' days';
   document.getElementById('sFill').textContent    = tf.toFixed(2);
-  document.getElementById('sRemain').textContent  = rem.toFixed(2);
 
-  const remEl = document.getElementById('sRemain');
-  remEl.className = rem<=0 ? 'stat-val green' : 'stat-val red';
+  const remValEl  = document.getElementById('sRemain');
+  const remLblEl  = document.getElementById('sRemainLbl');
+  const remSubEl  = document.getElementById('sRemainSub');
+  const remCardEl = document.getElementById('sRemainCard');
+
+  if(isOver){
+    const over = tf - th;
+    remValEl.textContent  = '+' + over.toFixed(2);
+    remValEl.className    = 'stat-val accent';
+    if(remLblEl)  remLblEl.textContent  = 'Overrun';
+    if(remSubEl)  remSubEl.textContent  = 'hrs over estimate';
+    if(remCardEl) remCardEl.className   = 'sc c-amber';
+  } else {
+    remValEl.textContent  = rem.toFixed(2);
+    remValEl.className    = rem <= 0 ? 'stat-val green' : 'stat-val red';
+    if(remLblEl)  remLblEl.textContent  = 'Remaining';
+    if(remSubEl)  remSubEl.textContent  = 'hrs left';
+    if(remCardEl) remCardEl.className   = rem <= 0 ? 'sc c-green' : 'sc c-red';
+  }
 
   document.getElementById('sPct').textContent     = pct.toFixed(1)+'%';
   document.getElementById('progFill').style.width = pct+'%';
