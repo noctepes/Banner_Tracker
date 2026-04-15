@@ -702,7 +702,20 @@
       color: var(--muted);
       text-align: left;
       border-right: 2px solid var(--border2) !important;
+      cursor: pointer;
+      user-select: none;
+      transition: color .15s;
     }
+    .th-lang-cell:hover { color: var(--text); }
+    .th-lang-cell .sort-arrow {
+      display: inline-block;
+      margin-left: 5px;
+      font-size: 9px;
+      opacity: 0.5;
+      transition: opacity .15s;
+    }
+    .th-lang-cell:hover .sort-arrow,
+    .th-lang-cell.active .sort-arrow { opacity: 1; color: var(--accent); }
 
     .th-prod {
       min-width: 100px;
@@ -1407,6 +1420,7 @@
       products: [],
       matrix: {}
     };
+    let sortLangDir = null; // null | 'asc' | 'desc'
 
     // total fill across all languages
     function totalFill() { return S.languages.reduce((s, l) => s + (S.fillByLang[l] || 0), 0); }
@@ -1459,9 +1473,22 @@
       updateStats();
     }
 
+    function sortByLang() {
+      if (sortLangDir === null || sortLangDir === 'desc') {
+        S.languages.sort((a, b) => a.localeCompare(b));
+        sortLangDir = 'asc';
+      } else {
+        S.languages.sort((a, b) => b.localeCompare(a));
+        sortLangDir = 'desc';
+      }
+      render();
+    }
+
     function renderHead() {
+      const arrow = sortLangDir === 'asc' ? '▲' : sortLangDir === 'desc' ? '▼' : '⇅';
+      const activeClass = sortLangDir ? ' active' : '';
       let h = `<tr>
-    <th class="th-lang-cell">Language</th>`;
+    <th class="th-lang-cell${activeClass}" onclick="sortByLang()">Language<span class="sort-arrow">${arrow}</span></th>`;
       h += `<th class="th-stat-cell quality">Quality</th>`;
       h += `<th class="th-stat-cell">Min</th>`;
       h += `<th class="th-stat-cell accent">Hours</th>`;
