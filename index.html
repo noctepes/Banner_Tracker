@@ -706,7 +706,11 @@
       user-select: none;
       transition: color .15s;
     }
-    .th-lang-cell:hover { color: var(--text); }
+
+    .th-lang-cell:hover {
+      color: var(--text);
+    }
+
     .th-lang-cell .sort-arrow {
       display: inline-block;
       margin-left: 5px;
@@ -714,8 +718,12 @@
       opacity: 0.5;
       transition: opacity .15s;
     }
+
     .th-lang-cell:hover .sort-arrow,
-    .th-lang-cell.active .sort-arrow { opacity: 1; color: var(--accent); }
+    .th-lang-cell.active .sort-arrow {
+      opacity: 1;
+      color: var(--accent);
+    }
 
     .th-prod {
       min-width: 100px;
@@ -832,6 +840,7 @@
     }
 
     .td-lang-cell {
+      width: 200px;
       background: var(--surface2);
       position: sticky;
       left: 0;
@@ -843,7 +852,7 @@
     .lang-cell-inner {
       display: flex;
       align-items: center;
-      gap: 7px;
+      /* gap: 7px; */
     }
 
     .lang-input {
@@ -853,9 +862,9 @@
       font-family: var(--mono);
       font-size: 12px;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      width: 60px;
+      width: 120px;
       transition: color .15s;
     }
 
@@ -869,11 +878,13 @@
       border: none;
       cursor: pointer;
       color: var(--muted);
-      font-size: 10px;
-      padding: 2px;
+      font-size: 8px;
+      padding: 1px;
+      line-height: 1;
       opacity: 0;
       transition: all .15s;
       margin-left: auto;
+      flex-shrink: 0;
     }
 
     .tr-lang:hover .row-del {
@@ -1373,7 +1384,7 @@
       <h3>Add Language</h3>
       <div class="modal-field">
         <label>Language Code (e.g. FR, DE, JP)</label>
-        <input id="langCodeInput" class="modal-input" type="text" maxlength="6" placeholder="AT"
+        <input id="langCodeInput" class="modal-input" type="text" maxlength="20" placeholder="AT"
           style="text-transform:uppercase;">
       </div>
       <div class="modal-actions">
@@ -1526,7 +1537,7 @@
         <div class="lang-cell-inner">
           <input class="lang-input" value="${esc(lang)}"
             onchange="renameLang(${li},this.value)"
-            maxlength="6" title="Rename">
+            maxlength="20" title="Rename">
           <button class="row-del" onclick="deleteLang(${li})" title="Remove">✕</button>
         </div>
       </td>`;
