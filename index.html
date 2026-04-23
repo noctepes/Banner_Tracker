@@ -9,6 +9,42 @@
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@300;400;500;600&display=swap"
     rel="stylesheet">
   <style>
+    /* ── DESIGN TOKENS ─────────────────────────────────────────────
+       Backgrounds & surfaces
+       --bg           page background
+       --surface      topbar / sidebar
+       --surface2     cards, table headers, inputs
+       --surface3     total row, deep wells
+
+       Borders
+       --border       subtle dividers
+       --border2      stronger outlines
+
+       Text
+       --text         primary
+       --dim          secondary, de-emphasised
+       --muted        labels, placeholders
+
+       Brand
+       --accent       primary highlight (amber)
+       --accent-d     accent @ 12% opacity  (bg tint)
+       --accent-d2    accent @ 22% opacity  (pressed)
+
+       Semantic status colours   (avoid raw color names as variable names)
+       --clr-ok       positive / complete  (green)
+       --clr-ok-dim   positive bg tint
+       --clr-err      negative / overdue   (red)
+       --clr-info     neutral info         (blue)
+       --clr-info-dim info bg tint
+
+       Typography
+       --mono         JetBrains Mono
+       --sans         DM Sans
+
+       Misc
+       --r            default border-radius
+       --sidebar-w    sidebar width
+    ────────────────────────────────────────────────────────────── */
     :root {
       --bg: #0b0d12;
       --surface: #111318;
@@ -16,17 +52,21 @@
       --surface3: #1e222d;
       --border: #1f2330;
       --border2: #2a3045;
+
       --text: #d8dff0;
-      --muted: #7080a0;
       --dim: #9aaabf;
+      --muted: #7080a0;
+
       --accent: #f0a03c;
       --accent-d: rgba(240, 160, 60, .12);
       --accent-d2: rgba(240, 160, 60, .22);
-      --green: #3fd68a;
-      --green-d: rgba(63, 214, 138, .10);
-      --red: #f06060;
-      --blue: #5ba4f5;
-      --blue-d: rgba(91, 164, 245, .10);
+
+      --clr-ok: #3fd68a;
+      --clr-ok-dim: rgba(63, 214, 138, .10);
+      --clr-err: #f06060;
+      --clr-info: #5ba4f5;
+      --clr-info-dim: rgba(91, 164, 245, .10);
+
       --mono: 'JetBrains Mono', monospace;
       --sans: 'DM Sans', sans-serif;
       --r: 6px;
@@ -174,11 +214,11 @@
     }
 
     .cloud-status.connected {
-      color: var(--green);
+      color: var(--clr-ok);
     }
 
     .cloud-status.error {
-      color: var(--red);
+      color: var(--clr-err);
     }
 
     @keyframes blink {
@@ -257,7 +297,7 @@
     }
 
     .btn-job-del:hover {
-      color: var(--red);
+      color: var(--clr-err);
     }
 
     .topbar-right {
@@ -283,7 +323,7 @@
     }
 
     .save-dot.saved {
-      color: var(--green);
+      color: var(--clr-ok);
     }
 
     /* ── BODY LAYOUT ── */
@@ -332,7 +372,7 @@
       margin-bottom: 10px;
     }
 
-    /* stat cards in sidebar */
+    /* stat cards */
     .sc {
       padding: 9px 10px;
       background: var(--surface2);
@@ -353,16 +393,16 @@
       border-left-color: var(--accent);
     }
 
-    .sc.c-green {
-      border-left-color: var(--green);
+    .sc.c-ok {
+      border-left-color: var(--clr-ok);
     }
 
-    .sc.c-red {
-      border-left-color: var(--red);
+    .sc.c-err {
+      border-left-color: var(--clr-err);
     }
 
-    .sc.c-blue {
-      border-left-color: var(--blue);
+    .sc.c-info {
+      border-left-color: var(--clr-info);
     }
 
     .sc-lbl {
@@ -389,16 +429,16 @@
       color: var(--accent);
     }
 
-    .stat-val.green {
-      color: var(--green);
+    .stat-val.ok {
+      color: var(--clr-ok);
     }
 
-    .stat-val.red {
-      color: var(--red);
+    .stat-val.err {
+      color: var(--clr-err);
     }
 
-    .stat-val.blue {
-      color: var(--blue);
+    .stat-val.info {
+      color: var(--clr-info);
     }
 
     .sc-sub {
@@ -408,7 +448,7 @@
       margin-top: 3px;
     }
 
-    /* progress in sidebar */
+    /* progress */
     .prog-card {
       background: var(--surface2);
       border-radius: 5px;
@@ -458,49 +498,6 @@
       font-size: 9px;
       font-family: var(--mono);
       color: var(--muted);
-    }
-
-    /* config row */
-    .cfg-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 7px;
-    }
-
-    .cfg-lbl {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .cfg-inp {
-      width: 68px;
-      background: var(--surface3);
-      border: 1px solid var(--border2);
-      border-radius: 4px;
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: 11px;
-      padding: 4px 7px;
-      text-align: right;
-      transition: border-color .2s;
-    }
-
-    .cfg-inp:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .cfg-inp::-webkit-outer-spin-button,
-    .cfg-inp::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-    }
-
-    .cfg-inp {
-      -moz-appearance: textfield;
     }
 
     /* sidebar buttons */
@@ -554,7 +551,7 @@
       width: 100%;
     }
 
-    /* Export dropdown in sidebar */
+    /* Export dropdown */
     .sb-dropdown {
       position: relative;
     }
@@ -609,7 +606,6 @@
       overflow: hidden;
     }
 
-    /* mini toolbar above table */
     .main-toolbar {
       display: flex;
       align-items: center;
@@ -789,7 +785,7 @@
 
     .th-prod:hover .col-del {
       opacity: 1;
-      color: var(--red);
+      color: var(--clr-err);
     }
 
     .th-stat-cell {
@@ -810,16 +806,16 @@
       color: var(--accent);
     }
 
-    .th-stat-cell.blue {
-      color: var(--blue);
+    .th-stat-cell.info {
+      color: var(--clr-info);
     }
 
-    .th-stat-cell.green {
-      color: var(--green);
+    .th-stat-cell.ok {
+      color: var(--clr-ok);
     }
 
-    .th-stat-cell.red {
-      color: var(--red);
+    .th-stat-cell.err {
+      color: var(--clr-err);
     }
 
     /* BODY ROWS */
@@ -832,6 +828,10 @@
     }
 
     .tr-lang:hover .td-stat-cell {
+      background: rgba(255, 255, 255, .012);
+    }
+
+    .tr-lang:hover .td-minb-cell {
       background: rgba(255, 255, 255, .012);
     }
 
@@ -852,7 +852,6 @@
     .lang-cell-inner {
       display: flex;
       align-items: center;
-      /* gap: 7px; */
     }
 
     .lang-input {
@@ -892,7 +891,46 @@
     }
 
     .row-del:hover {
-      color: var(--red);
+      color: var(--clr-err);
+    }
+
+    /* Min/B editable column */
+    .td-minb-cell {
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .minb-inp {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+      padding: 9px 8px;
+      transition: all .12s;
+      cursor: pointer;
+    }
+
+    .minb-inp:hover {
+      background: var(--accent-d);
+    }
+
+    .minb-inp:focus {
+      outline: none;
+      background: var(--accent-d2);
+      font-weight: 700;
+    }
+
+    .minb-inp::-webkit-outer-spin-button,
+    .minb-inp::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .minb-inp {
+      -moz-appearance: textfield;
     }
 
     .td-qty-cell {
@@ -958,8 +996,8 @@
       font-size: 13px;
     }
 
-    .td-stat-cell.blue {
-      color: var(--blue);
+    .td-stat-cell.info {
+      color: var(--clr-info);
       font-weight: 600;
       font-size: 13px;
     }
@@ -969,14 +1007,14 @@
       font-size: 10px;
     }
 
-    .td-stat-cell.green {
-      color: var(--green);
+    .td-stat-cell.ok {
+      color: var(--clr-ok);
       font-weight: 600;
       font-size: 13px;
     }
 
-    .td-stat-cell.red {
-      color: var(--red);
+    .td-stat-cell.err {
+      color: var(--clr-err);
       font-weight: 600;
       font-size: 13px;
     }
@@ -987,7 +1025,7 @@
       font-size: 12px;
     }
 
-    /* fill input cell */
+    /* fill cell */
     .td-fill-cell {
       background: var(--bg);
       text-align: center;
@@ -996,7 +1034,7 @@
     .fill-inp {
       background: transparent;
       border: none;
-      color: var(--green);
+      color: var(--clr-ok);
       font-family: var(--mono);
       font-size: 12px;
       font-weight: 600;
@@ -1008,13 +1046,13 @@
     }
 
     .fill-inp:hover {
-      background: rgba(63, 214, 138, .06);
+      background: var(--clr-ok-dim);
     }
 
     .fill-inp:focus {
       outline: none;
-      background: rgba(63, 214, 138, .10);
-      color: var(--green);
+      background: var(--clr-ok-dim);
+      color: var(--clr-ok);
       font-weight: 700;
     }
 
@@ -1074,8 +1112,8 @@
       font-size: 15px;
     }
 
-    .td-total-stat.blue {
-      color: var(--blue);
+    .td-total-stat.info {
+      color: var(--clr-info);
     }
 
     .td-total-stat.muted {
@@ -1084,12 +1122,12 @@
       font-weight: 400;
     }
 
-    .td-total-stat.green {
-      color: var(--green);
+    .td-total-stat.ok {
+      color: var(--clr-ok);
     }
 
-    .td-total-stat.red {
-      color: var(--red);
+    .td-total-stat.err {
+      color: var(--clr-err);
     }
 
     .td-total-stat.over {
@@ -1182,7 +1220,7 @@
       padding: 10px 16px;
       font-size: 11px;
       font-family: var(--mono);
-      color: var(--green);
+      color: var(--clr-ok);
       box-shadow: 0 8px 28px rgba(0, 0, 0, .5);
       transform: translateY(60px);
       opacity: 0;
@@ -1195,6 +1233,7 @@
       opacity: 1;
     }
 
+    /* ── SCROLLBARS ── */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -1287,23 +1326,18 @@
           <div class="sc-sub">banners total</div>
         </div>
         <div class="sc c-amber">
-          <div class="sc-lbl">Minutes</div>
-          <div class="stat-val accent" id="sMinutes">0</div>
-          <div class="sc-sub">estimated</div>
-        </div>
-        <div class="sc c-amber">
           <div class="sc-lbl">Hours</div>
           <div class="stat-val accent" id="sHours">0.00</div>
           <div class="sc-sub" id="sDays">0.00 days</div>
         </div>
-        <div class="sc c-green">
+        <div class="sc c-ok">
           <div class="sc-lbl">Logged</div>
-          <div class="stat-val green" id="sFill">0.00</div>
+          <div class="stat-val ok" id="sFill">0.00</div>
           <div class="sc-sub">hrs filled</div>
         </div>
-        <div class="sc c-red" id="sRemainCard">
+        <div class="sc c-err" id="sRemainCard">
           <div class="sc-lbl" id="sRemainLbl">Remaining</div>
-          <div class="stat-val red" id="sRemain">0.00</div>
+          <div class="stat-val err" id="sRemain">0.00</div>
           <div class="sc-sub" id="sRemainSub">hrs left</div>
         </div>
       </div>
@@ -1320,15 +1354,6 @@
             <div class="prog-fill" id="progFill" style="width:0%"></div>
           </div>
           <div class="prog-sub" id="progSub">No hours logged yet</div>
-        </div>
-      </div>
-
-      <!-- CONFIG -->
-      <div class="sb-section">
-        <div class="sb-title">Config</div>
-        <div class="cfg-row">
-          <span class="cfg-lbl">min / banner</span>
-          <input id="minsInput" class="cfg-inp" type="number" value="40" min="1" step="1" onchange="onConfigChange()">
         </div>
       </div>
 
@@ -1358,14 +1383,10 @@
 
     <!-- MAIN -->
     <div class="main">
-
-      <!-- mini toolbar -->
       <div class="main-toolbar">
         <button class="btn primary" onclick="openAddLang()">+ Language</button>
         <button class="btn primary" onclick="openAddProduct()">+ Product</button>
       </div>
-
-      <!-- table -->
       <div class="table-wrap">
         <table id="mainTable">
           <thead id="tHead"></thead>
@@ -1373,8 +1394,7 @@
           <tfoot id="tFoot"></tfoot>
         </table>
       </div>
-
-    </div><!-- /main -->
+    </div>
 
   </div><!-- /body -->
 
@@ -1409,14 +1429,14 @@
     </div>
   </div>
 
-  <!-- HIDDEN import input -->
   <input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(event)">
-
   <div class="toast" id="toast"></div>
 
   <script>
     // ── UTILS ──────────────────────────────────────────────────────
-    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
     function autoResizeTA(el) {
       el.style.height = 'auto';
       el.style.height = el.scrollHeight + 'px';
@@ -1425,55 +1445,56 @@
     // ── STATE ──────────────────────────────────────────────────────
     let S = {
       projectName: '',
-      minsPerBanner: 40,
-      fillByLang: {},   // { 'AT': 5.5, 'DE': 12, ... }
+      minsPerLang: {},   // { 'AT': 45, 'DE': 30, … }  replaces global minsPerBanner
+      fillByLang: {},   // { 'AT': 5.5, … }
       languages: [],
       products: [],
       matrix: {}
     };
     let sortLangDir = null; // null | 'asc' | 'desc'
 
-    // total fill across all languages
+    // ── PER-LANG MINS HELPER ───────────────────────────────────────
+    // Returns mins/banner for a language; falls back to 40 if not yet set
+    function langMins(lang) {
+      const v = S.minsPerLang && S.minsPerLang[lang];
+      return (v && v > 0) ? v : 40;
+    }
+
+    // ── AGGREGATES ────────────────────────────────────────────────
     function totalFill() { return S.languages.reduce((s, l) => s + (S.fillByLang[l] || 0), 0); }
+    function totalHours() { return S.languages.reduce((s, l) => s + (rowQ(l) * langMins(l)) / 60, 0); }
 
     // ── REMAIN/OVERRUN HELPER ──────────────────────────────────────
-    // Returns { text, cls } for the "Remain" cell
-    // States: no data '—' | remaining red | done green | overrun amber
     function remInfo(h, fl, hasData) {
       if (!hasData) return { text: '—', rowCls: '', totalCls: '' };
       if (fl === 0 && h === 0) return { text: '—', rowCls: '', totalCls: '' };
       if (fl > h) {
-        const over = fl - h;
-        return {
-          text: '+' + over.toFixed(2) + ' over',
-          rowCls: 'over',
-          totalCls: 'over'
-        };
+        return { text: '+' + (fl - h).toFixed(2) + ' over', rowCls: 'over', totalCls: 'over' };
       }
       if (fl >= h) {
-        return { text: '✓ done', rowCls: 'green', totalCls: 'green' };
+        return { text: '✓ done', rowCls: 'ok', totalCls: 'ok' };
       }
-      return { text: (h - fl).toFixed(2), rowCls: 'red', totalCls: 'red' };
+      return { text: (h - fl).toFixed(2), rowCls: 'err', totalCls: 'err' };
     }
 
-    // ── HELPERS ────────────────────────────────────────────────────
+    // ── MATRIX HELPERS ────────────────────────────────────────────
     function qty(lang, prod) { return (S.matrix[lang] || {})[prod] || 0; }
     function setQty(lang, prod, v) { if (!S.matrix[lang]) S.matrix[lang] = {}; S.matrix[lang][prod] = isNaN(v) || v < 0 ? 0 : v; }
     function rowQ(lang) { return S.products.reduce((s, p) => s + qty(lang, p), 0); }
     function colQ(prod) { return S.languages.reduce((s, l) => s + qty(l, prod), 0); }
     function totalQ() { return S.languages.reduce((s, l) => s + rowQ(l), 0); }
 
-    // ── RENDER TABLE ───────────────────────────────────────────────
+    // ── RENDER ────────────────────────────────────────────────────
     function render() {
       if (S.languages.length === 0 || S.products.length === 0) {
         document.getElementById('tHead').innerHTML = '';
         document.getElementById('tBody').innerHTML = `
-      <tr><td colspan="99" style="text-align:center;padding:60px 24px;">
-        <div style="font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);line-height:2.2;">
-          ${S.products.length === 0 ? '→ Add a <strong style="color:var(--accent)">Product</strong> to get started' : ''}
-          ${S.languages.length === 0 ? '<br>→ Add a <strong style="color:var(--accent)">Language</strong> to get started' : ''}
-        </div>
-      </td></tr>`;
+          <tr><td colspan="99" style="text-align:center;padding:60px 24px;">
+            <div style="font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);line-height:2.2;">
+              ${S.products.length === 0 ? '→ Add a <strong style="color:var(--accent)">Product</strong> to get started' : ''}
+              ${S.languages.length === 0 ? '<br>→ Add a <strong style="color:var(--accent)">Language</strong> to get started' : ''}
+            </div>
+          </td></tr>`;
         document.getElementById('tFoot').innerHTML = '';
         updateStats();
         return;
@@ -1499,22 +1520,22 @@
       const arrow = sortLangDir === 'asc' ? '▲' : sortLangDir === 'desc' ? '▼' : '⇅';
       const activeClass = sortLangDir ? ' active' : '';
       let h = `<tr>
-    <th class="th-lang-cell${activeClass}" onclick="sortByLang()">Language<span class="sort-arrow">${arrow}</span></th>`;
+        <th class="th-lang-cell${activeClass}" onclick="sortByLang()">Language<span class="sort-arrow">${arrow}</span></th>`;
+      h += `<th class="th-stat-cell accent">Min/B</th>`;
       h += `<th class="th-stat-cell quality">Quality</th>`;
-      h += `<th class="th-stat-cell">Min</th>`;
       h += `<th class="th-stat-cell accent">Hours</th>`;
-      h += `<th class="th-stat-cell blue">Days</th>`;
-      h += `<th class="th-stat-cell green">Fill Hrs</th>`;
-      h += `<th class="th-stat-cell red">Remain</th>`;
+      h += `<th class="th-stat-cell info">Days</th>`;
+      h += `<th class="th-stat-cell ok">Fill Hrs</th>`;
+      h += `<th class="th-stat-cell err">Remain</th>`;
       S.products.forEach((p, i) => {
         h += `<th class="th-prod">
-      <div class="th-prod-inner">
-        <textarea class="prod-input" rows="1"
-          onchange="renameProd(${i},this.value)"
-          oninput="autoResizeTA(this)"
-          title="Click to rename">${esc(p)}</textarea>
-        <button class="col-del" onclick="deleteProd(${i})" title="Remove product">✕</button>
-      </div></th>`;
+          <div class="th-prod-inner">
+            <textarea class="prod-input" rows="1"
+              onchange="renameProd(${i},this.value)"
+              oninput="autoResizeTA(this)"
+              title="Click to rename">${esc(p)}</textarea>
+            <button class="col-del" onclick="deleteProd(${i})" title="Remove product">✕</button>
+          </div></th>`;
       });
       h += `</tr>`;
       document.getElementById('tHead').innerHTML = h;
@@ -1525,41 +1546,45 @@
       let b = '';
       S.languages.forEach((lang, li) => {
         const q = rowQ(lang);
-        const m = q * S.minsPerBanner;
-        const h = m / 60;
+        const mb = langMins(lang);
+        const h = (q * mb) / 60;
         const d = h / 8;
         const fl = S.fillByLang[lang] || 0;
-        const rm = Math.max(0, h - fl);
-        const remClass = rm <= 0 ? 'green' : 'red';
         const ri = remInfo(h, fl, q > 0);
+
         b += `<tr class="tr-lang" data-li="${li}">
-      <td class="td-lang-cell">
-        <div class="lang-cell-inner">
-          <input class="lang-input" value="${esc(lang)}"
-            onchange="renameLang(${li},this.value)"
-            maxlength="20" title="Rename">
-          <button class="row-del" onclick="deleteLang(${li})" title="Remove">✕</button>
-        </div>
-      </td>`;
+          <td class="td-lang-cell">
+            <div class="lang-cell-inner">
+              <input class="lang-input" value="${esc(lang)}"
+                onchange="renameLang(${li},this.value)"
+                maxlength="20" title="Rename">
+              <button class="row-del" onclick="deleteLang(${li})" title="Remove">✕</button>
+            </div>
+          </td>`;
+        b += `<td class="td-minb-cell">
+          <input class="minb-inp" type="number" value="${mb}"
+            min="1" step="1"
+            data-lang="${esc(lang)}"
+            oninput="onMinBInput(this)">
+        </td>`;
         b += `<td class="td-stat-cell quality" id="rq-${li}">${q || '—'}</td>`;
-        b += `<td class="td-stat-cell muted"   id="rm-${li}">${q ? (m.toLocaleString()) : '—'}</td>`;
         b += `<td class="td-stat-cell accent"  id="rh-${li}">${q ? h.toFixed(2) : '—'}</td>`;
-        b += `<td class="td-stat-cell blue"    id="rd-${li}">${q ? d.toFixed(2) : '—'}</td>`;
+        b += `<td class="td-stat-cell info"    id="rd-${li}">${q ? d.toFixed(2) : '—'}</td>`;
         b += `<td class="td-fill-cell">
-      <input class="fill-inp" type="number" value="${fl || ''}"
-        min="0" step="0.5" placeholder="0"
-        data-lang="${esc(lang)}"
-        oninput="onFillInput(this)">
-    </td>`;
+          <input class="fill-inp" type="number" value="${fl || ''}"
+            min="0" step="0.5" placeholder="0"
+            data-lang="${esc(lang)}"
+            oninput="onFillInput(this)">
+        </td>`;
         b += `<td class="td-stat-cell ${ri.rowCls}" id="rrem-${li}">${ri.text}</td>`;
         S.products.forEach((prod, pi) => {
           const v = qty(lang, prod);
           b += `<td class="td-qty-cell">
-        <input class="qty-inp" type="number" value="${v || ''}"
-          min="0" placeholder="—"
-          data-lang="${esc(lang)}" data-prod="${esc(prod)}"
-          oninput="onQtyInput(this)">
-      </td>`;
+            <input class="qty-inp" type="number" value="${v || ''}"
+              min="0" placeholder="—"
+              data-lang="${esc(lang)}" data-prod="${esc(prod)}"
+              oninput="onQtyInput(this)">
+          </td>`;
         });
         b += `</tr>`;
       });
@@ -1568,19 +1593,18 @@
 
     function renderFoot() {
       const tq = totalQ();
-      const tm = tq * S.minsPerBanner;
-      const th = tm / 60;
+      const th = totalHours();
       const td = th / 8;
       const tf = totalFill();
-      const tr = Math.max(0, th - tf);
       const tri = remInfo(th, tf, tq > 0);
+
       let f = `<tr class="tr-total">
-    <td class="td-total-label">TOTAL</td>`;
+        <td class="td-total-label">TOTAL</td>`;
+      f += `<td class="td-total-stat muted">—</td>`;
       f += `<td class="td-total-stat quality" id="ft-quality">${tq.toLocaleString()}</td>`;
-      f += `<td class="td-total-stat muted"   id="ft-minutes">${tm.toLocaleString()}</td>`;
       f += `<td class="td-total-stat accent"  id="ft-hours">${th.toFixed(2)}</td>`;
-      f += `<td class="td-total-stat blue"    id="ft-days">${td.toFixed(2)}</td>`;
-      f += `<td class="td-total-stat green"   id="ft-fill">${tf.toFixed(2)}</td>`;
+      f += `<td class="td-total-stat info"    id="ft-days">${td.toFixed(2)}</td>`;
+      f += `<td class="td-total-stat ok"      id="ft-fill">${tf.toFixed(2)}</td>`;
       f += `<td class="td-total-stat ${tri.totalCls}" id="ft-remain">${tri.text}</td>`;
       S.products.forEach((p, i) => {
         const cq = colQ(p);
@@ -1590,54 +1614,61 @@
       document.getElementById('tFoot').innerHTML = f;
     }
 
-    // ── INLINE UPDATE (no full re-render) ─────────────────────────
+    // ── INLINE UPDATE: QTY ────────────────────────────────────────
     function onQtyInput(inp) {
       const lang = inp.dataset.lang;
       const prod = inp.dataset.prod;
-      const v = parseInt(inp.value) || 0;
-      setQty(lang, prod, v);
+      setQty(lang, prod, parseInt(inp.value) || 0);
 
       const li = S.languages.indexOf(lang);
       const q = rowQ(lang);
-      const m = q * S.minsPerBanner;
-      const h = m / 60;
+      const h = (q * langMins(lang)) / 60;
       const d = h / 8;
       const fl = S.fillByLang[lang] || 0;
-      const rm = Math.max(0, h - fl);
+      const ri = remInfo(h, fl, q > 0);
+
       document.getElementById(`rq-${li}`).textContent = q || '—';
-      document.getElementById(`rm-${li}`).textContent = q ? m.toLocaleString() : '—';
       document.getElementById(`rh-${li}`).textContent = q ? h.toFixed(2) : '—';
       document.getElementById(`rd-${li}`).textContent = q ? d.toFixed(2) : '—';
       const remEl = document.getElementById(`rrem-${li}`);
-      const ri = remInfo(h, fl, q > 0);
       remEl.textContent = ri.text;
       remEl.className = `td-stat-cell ${ri.rowCls}`;
 
       const pi = S.products.indexOf(prod);
       const cqEl = document.getElementById(`cq-${pi}`);
-      if (cqEl) { const cq = colQ(prod); cqEl.textContent = cq || '—'; }
+      if (cqEl) cqEl.textContent = colQ(prod) || '—';
 
-      const tq = totalQ();
-      const tm = tq * S.minsPerBanner;
-      const th2 = tm / 60;
-      const td = th2 / 8;
-      const tf = totalFill();
-      const tr = Math.max(0, th2 - tf);
-      document.getElementById('ft-quality').textContent = tq.toLocaleString();
-      document.getElementById('ft-minutes').textContent = tm.toLocaleString();
-      document.getElementById('ft-hours').textContent = th2.toFixed(2);
-      document.getElementById('ft-days').textContent = td.toFixed(2);
-      document.getElementById('ft-fill').textContent = tf.toFixed(2);
-      const ftRem = document.getElementById('ft-remain');
-      const tri = remInfo(th2, tf, tq > 0);
-      ftRem.textContent = tri.text;
-      ftRem.className = `td-total-stat ${tri.totalCls}`;
-
+      _patchFoot();
       updateStats();
       schedSave();
     }
 
-    // ── FILL INPUT HANDLER ─────────────────────────────────────────
+    // ── INLINE UPDATE: MIN/B ──────────────────────────────────────
+    function onMinBInput(inp) {
+      const lang = inp.dataset.lang;
+      const v = parseInt(inp.value) || 40;
+      if (!S.minsPerLang) S.minsPerLang = {};
+      S.minsPerLang[lang] = v < 1 ? 1 : v;
+
+      const li = S.languages.indexOf(lang);
+      const q = rowQ(lang);
+      const h = (q * langMins(lang)) / 60;
+      const d = h / 8;
+      const fl = S.fillByLang[lang] || 0;
+      const ri = remInfo(h, fl, q > 0);
+
+      document.getElementById(`rh-${li}`).textContent = q ? h.toFixed(2) : '—';
+      document.getElementById(`rd-${li}`).textContent = q ? d.toFixed(2) : '—';
+      const remEl = document.getElementById(`rrem-${li}`);
+      remEl.textContent = ri.text;
+      remEl.className = `td-stat-cell ${ri.rowCls}`;
+
+      _patchFoot();
+      updateStats();
+      schedSave();
+    }
+
+    // ── INLINE UPDATE: FILL ───────────────────────────────────────
     function onFillInput(inp) {
       const lang = inp.dataset.lang;
       const v = parseFloat(inp.value) || 0;
@@ -1646,43 +1677,44 @@
 
       const li = S.languages.indexOf(lang);
       const q = rowQ(lang);
-      const h = (q * S.minsPerBanner) / 60;
-      const rm = Math.max(0, h - v);
-      const remEl = document.getElementById(`rrem-${li}`);
+      const h = (q * langMins(lang)) / 60;
       const ri = remInfo(h, v, q > 0);
+      const remEl = document.getElementById(`rrem-${li}`);
       remEl.textContent = ri.text;
       remEl.className = `td-stat-cell ${ri.rowCls}`;
 
-      // update foot totals
-      const tq = totalQ();
-      const th2 = (tq * S.minsPerBanner) / 60;
-      const tf = totalFill();
-      const tr = Math.max(0, th2 - tf);
-      document.getElementById('ft-fill').textContent = tf.toFixed(2);
-      const ftRem = document.getElementById('ft-remain');
-      const tri = remInfo(th2, tf, tq > 0);
-      ftRem.textContent = tri.text;
-      ftRem.className = `td-total-stat ${tri.totalCls}`;
-
+      _patchFoot();
       updateStats();
       schedSave();
     }
 
-    function updateStats() {
-      const minsPerB = parseInt(document.getElementById('minsInput').value) || 40;
-      S.minsPerBanner = minsPerB;
-
+    // Shared footer patch (used by all inline handlers)
+    function _patchFoot() {
       const tq = totalQ();
-      const tm = tq * minsPerB;
-      const th = tm / 60;
+      const th = totalHours();
       const td = th / 8;
       const tf = totalFill();
-      const rem = Math.max(0, th - tf);
+      const tri = remInfo(th, tf, tq > 0);
+
+      document.getElementById('ft-quality').textContent = tq.toLocaleString();
+      document.getElementById('ft-hours').textContent = th.toFixed(2);
+      document.getElementById('ft-days').textContent = td.toFixed(2);
+      document.getElementById('ft-fill').textContent = tf.toFixed(2);
+      const ftRem = document.getElementById('ft-remain');
+      ftRem.textContent = tri.text;
+      ftRem.className = `td-total-stat ${tri.totalCls}`;
+    }
+
+    // ── SIDEBAR STATS ─────────────────────────────────────────────
+    function updateStats() {
+      const tq = totalQ();
+      const th = totalHours();
+      const td = th / 8;
+      const tf = totalFill();
       const pct = th > 0 ? Math.min(100, (tf / th) * 100) : 0;
       const isOver = tf > th && th > 0;
 
       document.getElementById('sQuality').textContent = tq.toLocaleString();
-      document.getElementById('sMinutes').textContent = tm.toLocaleString();
       document.getElementById('sHours').textContent = th.toFixed(2);
       document.getElementById('sDays').textContent = td.toFixed(2) + ' days';
       document.getElementById('sFill').textContent = tf.toFixed(2);
@@ -1700,11 +1732,12 @@
         if (remSubEl) remSubEl.textContent = 'hrs over estimate';
         if (remCardEl) remCardEl.className = 'sc c-amber';
       } else {
+        const rem = Math.max(0, th - tf);
         remValEl.textContent = rem.toFixed(2);
-        remValEl.className = rem <= 0 ? 'stat-val green' : 'stat-val red';
+        remValEl.className = rem <= 0 ? 'stat-val ok' : 'stat-val err';
         if (remLblEl) remLblEl.textContent = 'Remaining';
         if (remSubEl) remSubEl.textContent = 'hrs left';
-        if (remCardEl) remCardEl.className = rem <= 0 ? 'sc c-green' : 'sc c-red';
+        if (remCardEl) remCardEl.className = rem <= 0 ? 'sc c-ok' : 'sc c-err';
       }
 
       document.getElementById('sPct').textContent = pct.toFixed(1) + '%';
@@ -1713,9 +1746,7 @@
         tf > 0 ? `${tf.toFixed(1)} / ${th.toFixed(1)} hrs logged` : 'No hours logged yet';
     }
 
-    function onConfigChange() { updateStats(); schedSave(); }
-
-    // ── RENAME / DELETE ────────────────────────────────────────────
+    // ── RENAME / DELETE ───────────────────────────────────────────
     function renameProd(i, newName) {
       const old = S.products[i];
       const nw = newName.trim().toUpperCase();
@@ -1738,7 +1769,19 @@
       if (!nw) { toast('Code cannot be empty'); return; }
       if (S.languages.includes(nw) && nw !== old) { toast('Language already exists'); return; }
       S.languages[i] = nw;
+      // migrate matrix
       if (S.matrix[old]) { S.matrix[nw] = S.matrix[old]; if (nw !== old) delete S.matrix[old]; }
+      // migrate minsPerLang
+      if (!S.minsPerLang) S.minsPerLang = {};
+      if (S.minsPerLang[old] !== undefined) {
+        S.minsPerLang[nw] = S.minsPerLang[old];
+        if (nw !== old) delete S.minsPerLang[old];
+      }
+      // migrate fillByLang
+      if (S.fillByLang[old] !== undefined) {
+        S.fillByLang[nw] = S.fillByLang[old];
+        if (nw !== old) delete S.fillByLang[old];
+      }
       schedSave();
     }
 
@@ -1757,10 +1800,12 @@
       if (!confirm(`Remove language "${name}"? This deletes all its data.`)) return;
       S.languages.splice(i, 1);
       delete S.matrix[name];
+      if (S.minsPerLang) delete S.minsPerLang[name];
+      if (S.fillByLang) delete S.fillByLang[name];
       render(); toast(`Removed: ${name}`);
     }
 
-    // ── ADD LANGUAGE / PRODUCT ─────────────────────────────────────
+    // ── ADD LANGUAGE / PRODUCT ────────────────────────────────────
     function openAddLang() {
       document.getElementById('langCodeInput').value = '';
       openModal('modalLang');
@@ -1771,6 +1816,7 @@
       if (!code) { toast('Enter a language code'); return; }
       if (S.languages.includes(code)) { toast(`"${code}" already exists`); return; }
       S.languages.push(code);
+      // minsPerLang intentionally NOT pre-set → langMins() returns 40 as default
       closeModal('modalLang');
       render(); toast(`Added: ${code}`);
     }
@@ -1789,9 +1835,10 @@
       render(); toast(`Added: ${name}`);
     }
 
-    // ── MODAL ──────────────────────────────────────────────────────
+    // ── MODAL ─────────────────────────────────────────────────────
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
     document.querySelectorAll('.modal-bg').forEach(el => {
       el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
     });
@@ -1803,24 +1850,26 @@
       }
     });
 
-    // ── EXPORT / IMPORT ────────────────────────────────────────────
-    function toggleDD() {
-      document.getElementById('exportMenu').classList.toggle('open');
-    }
+    // ── EXPORT / IMPORT ───────────────────────────────────────────
+    function toggleDD() { document.getElementById('exportMenu').classList.toggle('open'); }
     document.addEventListener('click', e => {
       if (!e.target.closest('.sb-dropdown')) document.getElementById('exportMenu').classList.remove('open');
     });
 
     function exportCSV() {
-      const rows = [['Language', ...S.products, 'Quality', 'Minutes', 'Hours', 'Days', 'Fill Hrs', 'Remain']];
+      const rows = [['Language', 'Min/B', ...S.products, 'Quality', 'Hours', 'Days', 'Fill Hrs', 'Remain']];
       S.languages.forEach(lang => {
-        const q = rowQ(lang), m = q * S.minsPerBanner, h = m / 60, d = h / 8;
-        const fl = S.fillByLang[lang] || 0, rm = Math.max(0, h - fl);
-        rows.push([lang, ...S.products.map(p => qty(lang, p)), q, m, h.toFixed(2), d.toFixed(2), fl.toFixed(2), rm.toFixed(2)]);
+        const q = rowQ(lang);
+        const mb = langMins(lang);
+        const h = (q * mb) / 60;
+        const d = h / 8;
+        const fl = S.fillByLang[lang] || 0;
+        const rm = Math.max(0, h - fl);
+        rows.push([lang, mb, ...S.products.map(p => qty(lang, p)), q, h.toFixed(2), d.toFixed(2), fl.toFixed(2), rm.toFixed(2)]);
       });
-      const tq = totalQ(), tm = tq * S.minsPerBanner, th = tm / 60, td = th / 8;
+      const tq = totalQ(), th = totalHours(), td = th / 8;
       const tf = totalFill(), tr = Math.max(0, th - tf);
-      rows.push(['TOTAL', ...S.products.map(p => colQ(p)), tq, tm, th.toFixed(2), td.toFixed(2), tf.toFixed(2), tr.toFixed(2)]);
+      rows.push(['TOTAL', '—', ...S.products.map(p => colQ(p)), tq, th.toFixed(2), td.toFixed(2), tf.toFixed(2), tr.toFixed(2)]);
       const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
       dlFile(csv, `${S.projectName}_${today()}.csv`, 'text/csv');
       document.getElementById('exportMenu').classList.remove('open');
@@ -1844,13 +1893,18 @@
           const data = JSON.parse(ev.target.result);
           if (!data.languages || !data.products || !data.matrix) throw new Error('Invalid format');
           S = data;
+          // ── migration: old single minsPerBanner → minsPerLang ──
+          if (!S.minsPerLang) {
+            S.minsPerLang = {};
+            if (S.minsPerBanner) {
+              S.languages.forEach(l => { S.minsPerLang[l] = S.minsPerBanner; });
+            }
+            delete S.minsPerBanner;
+          }
           if (!S.fillByLang) S.fillByLang = {};
           document.getElementById('projectName').value = S.projectName || '';
-          document.getElementById('minsInput').value = S.minsPerBanner || 40;
           render(); autoSave(); toast('Imported successfully');
-        } catch (err) {
-          toast('Import failed: ' + err.message);
-        }
+        } catch (err) { toast('Import failed: ' + err.message); }
       };
       reader.readAsText(file);
       e.target.value = '';
@@ -1864,7 +1918,7 @@
     }
     function today() { return new Date().toISOString().split('T')[0]; }
 
-    // ── LOCALSTORAGE ───────────────────────────────────────────────
+    // ── LOCALSTORAGE ──────────────────────────────────────────────
     let saveTimer;
     function schedSave() {
       const ind = document.getElementById('saveIndicator');
@@ -1874,7 +1928,7 @@
     }
     function autoSave() {
       S.projectName = document.getElementById('projectName').value;
-      S.minsPerBanner = parseInt(document.getElementById('minsInput').value) || 40;
+      // minsPerLang is maintained directly in S via onMinBInput — no input to read here
       try { localStorage.setItem('bannerTracker_v2', JSON.stringify(S)); } catch (e) { }
       const ind = document.getElementById('saveIndicator');
       ind.textContent = '● SAVED'; ind.className = 'save-dot saved';
@@ -1886,10 +1940,16 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           S = parsed;
-          // migrate: old format had fillHours (global), convert to fillByLang
-          if (!S.fillByLang) { S.fillByLang = {}; }
-          document.getElementById('projectName').value = S.projectName || 'Campaign 2025';
-          document.getElementById('minsInput').value = S.minsPerBanner || 40;
+          // ── migration: old single minsPerBanner → minsPerLang ──
+          if (!S.minsPerLang) {
+            S.minsPerLang = {};
+            if (S.minsPerBanner) {
+              S.languages.forEach(l => { S.minsPerLang[l] = S.minsPerBanner; });
+            }
+            delete S.minsPerBanner;
+          }
+          if (!S.fillByLang) S.fillByLang = {};
+          document.getElementById('projectName').value = S.projectName || '';
           return true;
         }
       } catch (e) { }
@@ -1905,11 +1965,11 @@
       toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
     }
 
-    // ── PROJECT NAME ───────────────────────────────────────────────
+    // ── PROJECT NAME ──────────────────────────────────────────────
     document.getElementById('projectName').addEventListener('input', schedSave);
 
-    // ── INIT ───────────────────────────────────────────────────────
-    const hadSaved = loadState();
+    // ── INIT ──────────────────────────────────────────────────────
+    loadState();
     render();
   </script>
 
@@ -1917,7 +1977,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js"></script>
   <script>
-    // ── FIREBASE INIT ──────────────────────────────────────────────
+    // ── FIREBASE INIT ─────────────────────────────────────────────
     const firebaseConfig = {
       apiKey: "AIzaSyACVKURgtQcohTiN5oOFCTDalh11IU20h0",
       authDomain: "banner-tracker.firebaseapp.com",
@@ -1937,16 +1997,26 @@
       firebase.initializeApp(firebaseConfig);
       db = firebase.firestore();
       cloudEnabled = true;
-    } catch (e) {
-      console.warn('Firebase init failed:', e);
-    }
+    } catch (e) { console.warn('Firebase init failed:', e); }
 
     // ── HELPERS ───────────────────────────────────────────────────
     function jobsCol() { return db.collection('bannerTracker').doc(currentAccount).collection('jobs'); }
     function jobDoc(id) { return jobsCol().doc(id); }
     function slugify(s) { return s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
     function freshState(name) {
-      return { projectName: name || '', minsPerBanner: 40, fillByLang: {}, languages: [], products: [], matrix: {} };
+      return { projectName: name || '', minsPerLang: {}, fillByLang: {}, languages: [], products: [], matrix: {} };
+    }
+    function migrateState(data) {
+      // Convert old minsPerBanner → minsPerLang
+      if (!data.minsPerLang) {
+        data.minsPerLang = {};
+        if (data.minsPerBanner) {
+          (data.languages || []).forEach(l => { data.minsPerLang[l] = data.minsPerBanner; });
+        }
+        delete data.minsPerBanner;
+      }
+      if (!data.fillByLang) data.fillByLang = {};
+      return data;
     }
 
     // ── CLOUD STATUS ──────────────────────────────────────────────
@@ -1960,7 +2030,6 @@
         error: '✕ error'
       }[state] || state;
     }
-
     function setSaveLoad(on) {
       document.getElementById('saveCloudBtn').disabled = !on;
       document.getElementById('loadCloudBtn').disabled = !on;
@@ -1980,7 +2049,8 @@
       localStorage.setItem('bannerTracker_account', name);
       setCloudStatus('connecting');
       try {
-        await db.collection('bannerTracker').doc(name).set({ _createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+        await db.collection('bannerTracker').doc(name)
+          .set({ _createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
         setCloudStatus('connected');
         toast('Connected: ' + name);
         await loadJobList();
@@ -1992,6 +2062,8 @@
     }
 
     // ── JOB LIST ──────────────────────────────────────────────────
+    // Populates the dropdown and pre-selects the last used job,
+    // but does NOT auto-load cloud data — local state is preserved.
     async function loadJobList() {
       const snap = await jobsCol().orderBy('_updatedAt', 'desc').get().catch(() => null);
       const sel = document.getElementById('jobSelect');
@@ -2005,21 +2077,32 @@
       document.getElementById('jobSep').style.display = '';
       document.getElementById('jobArea').classList.add('visible');
       setSaveLoad(false);
+
+      // Pre-select last job (does NOT load cloud data)
       const lastJob = localStorage.getItem('bannerTracker_job_' + currentAccount);
       if (lastJob && sel.querySelector(`option[value="${lastJob}"]`)) {
         sel.value = lastJob;
-        await switchJob(lastJob, true);
+        currentJob = lastJob;
+        document.getElementById('delJobBtn').style.display = '';
+        setSaveLoad(true);
+        // ← no loadFromCloud here: user decides when to pull
       }
     }
 
     // ── SWITCH JOB ────────────────────────────────────────────────
-    async function switchJob(jobId, silent) {
-      if (!jobId) { setSaveLoad(false); document.getElementById('delJobBtn').style.display = 'none'; return; }
+    // Only updates the active job reference and button states.
+    // No auto-load: local changes are not overwritten.
+    function switchJob(jobId) {
+      if (!jobId) {
+        currentJob = '';
+        setSaveLoad(false);
+        document.getElementById('delJobBtn').style.display = 'none';
+        return;
+      }
       currentJob = jobId;
       localStorage.setItem('bannerTracker_job_' + currentAccount, jobId);
       document.getElementById('delJobBtn').style.display = '';
       setSaveLoad(true);
-      await loadFromCloud(silent);
     }
 
     // ── NEW JOB ───────────────────────────────────────────────────
@@ -2042,19 +2125,16 @@
         localStorage.setItem('bannerTracker_job_' + currentAccount, id);
         S = ns;
         document.getElementById('projectName').value = S.projectName;
-        document.getElementById('minsInput').value = S.minsPerBanner;
         document.getElementById('delJobBtn').style.display = '';
         setSaveLoad(true);
         render();
         toast('✚ New job: ' + name.trim());
-      } catch (e) {
-        toast('Failed to create job: ' + e.message);
-      }
+      } catch (e) { toast('Failed to create job: ' + e.message); }
     }
 
     // ── DELETE JOB ────────────────────────────────────────────────
     async function deleteJob() {
-      if (!currentJob) { return; }
+      if (!currentJob) return;
       const sel = document.getElementById('jobSelect');
       const label = sel.options[sel.selectedIndex]?.textContent || currentJob;
       if (!confirm(`Delete job "${label}"?\nThis cannot be undone.`)) return;
@@ -2067,12 +2147,9 @@
         setSaveLoad(false);
         S = freshState('');
         document.getElementById('projectName').value = '';
-        document.getElementById('minsInput').value = 40;
         render();
         toast('Job deleted');
-      } catch (e) {
-        toast('Delete failed: ' + e.message);
-      }
+      } catch (e) { toast('Delete failed: ' + e.message); }
     }
 
     // ── SAVE TO CLOUD ─────────────────────────────────────────────
@@ -2080,7 +2157,6 @@
       if (!cloudEnabled || !currentAccount) { toast('Not connected'); return; }
       if (!currentJob) { toast('Select or create a job first'); return; }
       S.projectName = document.getElementById('projectName').value;
-      S.minsPerBanner = parseInt(document.getElementById('minsInput').value) || 40;
       const ind = document.getElementById('saveIndicator');
       ind.textContent = '● SAVING…'; ind.className = 'save-dot saving';
       try {
@@ -2100,7 +2176,7 @@
     }
 
     // ── LOAD FROM CLOUD ───────────────────────────────────────────
-    async function loadFromCloud(silent) {
+    async function loadFromCloud() {
       if (!cloudEnabled || !currentAccount) { toast('Not connected'); return; }
       if (!currentJob) { toast('Select a job first'); return; }
       const ind = document.getElementById('saveIndicator');
@@ -2108,23 +2184,22 @@
       try {
         const doc = await jobDoc(currentJob).get();
         if (!doc.exists) {
-          if (!silent) toast('No data for this job yet');
+          toast('No cloud data for this job yet');
           ind.textContent = '● IDLE'; ind.className = 'save-dot idle';
           return;
         }
-        const data = doc.data();
+        const data = migrateState(doc.data());
         S.projectName = data.projectName || '';
-        S.minsPerBanner = data.minsPerBanner || 40;
+        S.minsPerLang = data.minsPerLang || {};
         S.fillByLang = data.fillByLang || {};
         S.languages = data.languages || [];
         S.products = data.products || [];
         S.matrix = data.matrix || {};
         document.getElementById('projectName').value = S.projectName;
-        document.getElementById('minsInput').value = S.minsPerBanner;
         try { localStorage.setItem('bannerTracker_v2', JSON.stringify(S)); } catch (e) { }
         render();
         ind.textContent = '● LOADED'; ind.className = 'save-dot saved';
-        if (!silent) toast('↓ Loaded — ' + (S.projectName || currentJob));
+        toast('↓ Loaded — ' + (S.projectName || currentJob));
       } catch (e) {
         ind.textContent = '● ERROR'; ind.className = 'save-dot idle';
         toast('Load failed: ' + e.message);
@@ -2132,6 +2207,8 @@
     }
 
     // ── AUTO-CONNECT ON INIT ──────────────────────────────────────
+    // Reconnects saved account and fetches job list.
+    // Local state (from localStorage) is NOT overwritten on connect.
     (function () {
       const saved = localStorage.getItem('bannerTracker_account');
       if (saved) {
