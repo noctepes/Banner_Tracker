@@ -1571,8 +1571,8 @@
         b += `<td class="td-stat-cell accent"  id="rh-${li}">${q ? h.toFixed(2) : '—'}</td>`;
         b += `<td class="td-stat-cell info"    id="rd-${li}">${q ? d.toFixed(2) : '—'}</td>`;
         b += `<td class="td-fill-cell">
-          <input class="fill-inp" type="number" value="${fl || ''}"
-            min="0" step="0.5" placeholder="0"
+          <input class="fill-inp" type="text" inputmode="decimal" value="${fl || ''}"
+            placeholder="0"
             data-lang="${esc(lang)}"
             oninput="onFillInput(this)">
         </td>`;
@@ -1670,8 +1670,14 @@
 
     // ── INLINE UPDATE: FILL ───────────────────────────────────────
     function onFillInput(inp) {
+      // Normalize: comma → dot, strip invalid chars, keep only one dot
+      let raw = inp.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
+      const dotParts = raw.split('.');
+      if (dotParts.length > 2) raw = dotParts[0] + '.' + dotParts.slice(1).join('');
+      if (raw !== inp.value) inp.value = raw;
+
       const lang = inp.dataset.lang;
-      const v = parseFloat(inp.value) || 0;
+      const v = parseFloat(raw) || 0;
       if (!S.fillByLang) S.fillByLang = {};
       S.fillByLang[lang] = v < 0 ? 0 : v;
 
