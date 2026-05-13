@@ -46,30 +46,34 @@
        --sidebar-w    sidebar width
     ────────────────────────────────────────────────────────────── */
     :root {
-      --bg: #0b0d12;
-      --surface: #111318;
-      --surface2: #181b23;
-      --surface3: #1e222d;
-      --border: #1f2330;
-      --border2: #2a3045;
+      /* ── Spring CC Surfaces ── */
+      --bg:      #FAFAF7;
+      --surface: #282828;
+      --surface2:#F0EAE0;
+      --surface3:#E5D2B8;
+      --border:  rgba(185,185,177,0.28);
+      --border2: rgba(185,185,177,0.55);
 
-      --text: #d8dff0;
-      --dim: #9aaabf;
-      --muted: #7080a0;
+      /* ── Spring CC Text ── */
+      --text:  #282828;
+      --dim:   #555550;
+      --muted: #B9B9B1;
 
-      --accent: #f0a03c;
-      --accent-d: rgba(240, 160, 60, .12);
-      --accent-d2: rgba(240, 160, 60, .22);
+      /* ── Spring CC Brand ── */
+      --accent:   #FF3700;
+      --accent-d: rgba(255,55,0,0.08);
+      --accent-d2:rgba(255,55,0,0.16);
 
-      --clr-ok: #3fd68a;
-      --clr-ok-dim: rgba(63, 214, 138, .10);
-      --clr-err: #f06060;
-      --clr-info: #5ba4f5;
-      --clr-info-dim: rgba(91, 164, 245, .10);
+      /* ── Semantic Status ── */
+      --clr-ok:      #2DB87D;
+      --clr-ok-dim:  rgba(45,184,125,0.10);
+      --clr-err:     #D03030;
+      --clr-info:    #3B82D4;
+      --clr-info-dim:rgba(59,130,212,0.10);
 
       --mono: 'JetBrains Mono', monospace;
       --sans: 'DM Sans', sans-serif;
-      --r: 6px;
+      --r:    6px;
       --sidebar-w: 200px;
     }
 
@@ -110,7 +114,7 @@
     .logo {
       font-family: var(--mono);
       font-weight: 700;
-      font-size: 10px;
+      font-size: 20px;
       letter-spacing: 2.5px;
       color: var(--accent);
       text-transform: uppercase;
@@ -795,7 +799,7 @@
       font-size: 8px;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: #a0afc8;
+      color: var(--muted);
     }
 
     .th-stat-cell.quality {
@@ -980,7 +984,7 @@
       text-align: center;
       padding: 9px 10px;
       font-size: 11px;
-      color: #a0afc8;
+      color: var(--muted);
       background: var(--bg);
     }
 
@@ -1003,7 +1007,7 @@
     }
 
     .td-stat-cell.muted {
-      color: #8090b2;
+      color: var(--muted);
       font-size: 10px;
     }
 
@@ -1083,7 +1087,7 @@
       font-size: 8px;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #a0afc8;
+      color: var(--muted);
       padding: 10px 14px;
       border-right: 2px solid var(--border2) !important;
     }
@@ -1092,7 +1096,7 @@
       text-align: center;
       padding: 9px 10px;
       font-size: 11px;
-      color: #a0afc8;
+      color: var(--muted);
     }
 
     .td-total-stat {
@@ -1117,7 +1121,7 @@
     }
 
     .td-total-stat.muted {
-      color: #8090b2;
+      color: var(--muted);
       font-size: 11px;
       font-weight: 400;
     }
@@ -1280,6 +1284,164 @@
     .table-wrap::-webkit-scrollbar-corner {
       background: var(--surface3);
     }
+
+    /* ── SPRING CC BRAND OVERRIDES ──────────────────────────────────── */
+
+    /* Body: Spring CC Dark Depth gradient */
+    body {
+      background: linear-gradient(135deg, #1c1916 0%, #282828 55%, #3d1800 100%);
+      background-attachment: fixed;
+    }
+
+    /* Topbar: Off Black shell — children need white/light text */
+    .topbar {
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .logo { color: var(--accent); }
+    .sep  { background: rgba(255,255,255,0.15); }
+
+    .project-name {
+      color: #FFFFFF;
+      border-bottom-color: rgba(255,255,255,0.2);
+    }
+    .project-name::placeholder { color: rgba(255,255,255,0.32); }
+    .project-name:focus { border-bottom-color: var(--accent); }
+
+    .account-input {
+      color: #FFFFFF;
+      border-bottom-color: rgba(255,255,255,0.2);
+    }
+    .account-input::placeholder { color: rgba(255,255,255,0.32); }
+    .account-input:focus { border-bottom-color: var(--accent); }
+
+    .btn-connect {
+      background: transparent;
+      border-color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.65);
+    }
+    .btn-connect:hover { border-color: var(--accent); color: var(--accent); }
+
+    .cloud-status.disconnected { color: rgba(255,255,255,0.28); }
+    .cloud-status.connecting   { color: var(--accent); }
+    .cloud-status.connected    { color: var(--clr-ok); }
+    .cloud-status.error        { color: var(--clr-err); }
+
+    .job-select {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+      color: #FFFFFF;
+    }
+    .job-select:focus { border-color: var(--accent); }
+    .job-select option { background: var(--surface); color: #FFFFFF; }
+
+    .btn-job {
+      background: transparent;
+      border-color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.65);
+    }
+    .btn-job:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-job-del { color: rgba(255,255,255,0.35); }
+
+    .save-dot.idle   { color: rgba(255,255,255,0.28); }
+    .save-dot.saving { color: var(--accent); }
+    .save-dot.saved  { color: var(--clr-ok); }
+
+    /* Sidebar: light beige (--surface is now Off Black, override) */
+    .sidebar { background: var(--surface2); background: linear-gradient(225deg,rgba(28, 25, 22, 1) 0%, rgba(40, 40, 40, 1) 50%, rgba(61, 24, 0, 1) 100%);}
+    .sc      { background: #FFFFFF; }
+    .prog-card { background: #FFFFFF; }
+
+    /* Sidebar buttons */
+    .sb-btn { background: #FFFFFF; border-color: var(--border2); color: var(--dim); }
+    .sb-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .sb-btn:disabled:hover { border-color: var(--border2); color: var(--dim); }
+    .sb-dropdown-menu {
+      background: #FFFFFF;
+      border-color: var(--border2);
+      box-shadow: 0 -8px 24px rgba(40,40,40,0.12);
+    }
+    .sb-dd-item {
+      font-family: var(--sans);
+      color: var(--text);
+      border-bottom-color: var(--border);
+    }
+    .sb-dd-item:hover { background: var(--accent-d); color: var(--accent); }
+
+    /* Main toolbar */
+    .main-toolbar { background: #FFFFFF; border-bottom: 1px solid var(--border); background: linear-gradient(45deg,rgba(28, 25, 22, 1) 0%, rgba(40, 40, 40, 1) 50%, rgba(61, 24, 0, 1) 100%);}
+    .btn { background: #FFFFFF; border-color: var(--border2); color: var(--dim); }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+    .btn.primary:hover { background: #CC2D00; border-color: #CC2D00; }
+
+    /* Table: light surfaces */
+    .table-wrap { background: #FFFFFF; background: linear-gradient(145deg,rgba(28, 25, 22, 1) 0%, rgba(40, 40, 40, 1) 50%, rgba(61, 24, 0, 1) 100%);}
+    thead th    { background: var(--surface3); }
+    .th-lang-cell {
+      background: var(--surface3) !important;
+      color: var(--muted);
+      border-right-color: var(--border2) !important;
+    }
+    .th-lang-cell:hover { color: var(--text); }
+    .th-stat-cell { color: var(--muted); }
+    .th-stat-cell.quality { color: var(--dim); }
+
+    .td-lang-cell {
+      background: var(--surface2);
+      border-right-color: var(--border2) !important;
+    }
+    .td-stat-cell { color: var(--muted); background: #FFFFFF; }
+    .td-qty-cell  { background: #FFFFFF; }
+    .td-minb-cell { background: #FFFFFF; }
+    .td-fill-cell { background: #FFFFFF; }
+
+    /* Row hover: subtle Spring CC orange tint on light */
+    .tr-lang:hover .td-qty-cell,
+    .tr-lang:hover .td-stat-cell,
+    .tr-lang:hover .td-minb-cell { background: rgba(255,55,0,0.03); }
+    .tr-lang:hover .td-lang-cell  { background: var(--surface3); }
+
+    /* Table inputs */
+    .qty-inp:hover { background: rgba(40,40,40,0.04); color: var(--text); }
+    .qty-inp:focus { background: var(--accent-d); color: var(--accent); }
+
+    /* Total row */
+    .tr-total td    { background: var(--surface3); border-top: 2px solid var(--border2); }
+    .td-total-label { background: var(--surface3); color: var(--muted); border-right-color: var(--border2) !important; }
+    .td-total-qty   { color: var(--muted); }
+
+    /* Progress fill: solid Spring CC orange, no amber gradient */
+    .prog-fill { background: var(--accent); }
+
+    /* Modal */
+    .modal-bg { background: rgba(40,40,40,0.55); }
+    .modal {
+      background: #FFFFFF;
+      border-color: var(--border2);
+      box-shadow: 0 16px 48px rgba(40,40,40,0.20);
+    }
+    .modal-input {
+      background: var(--surface2);
+      border-color: var(--border2);
+      color: var(--text);
+    }
+
+    /* Toast: Off Black for contrast against light content */
+    .toast {
+      background: var(--surface);
+      border-color: rgba(255,255,255,0.12);
+      color: var(--clr-ok);
+      box-shadow: 0 8px 28px rgba(40,40,40,0.30);
+    }
+
+    /* Scrollbars: warm light theme */
+    ::-webkit-scrollbar-track  { background: var(--surface2); }
+    ::-webkit-scrollbar-thumb  { background: var(--border2); }
+    ::-webkit-scrollbar-corner { background: var(--surface2); }
+    .table-wrap::-webkit-scrollbar-track  { background: var(--surface3); }
+    .table-wrap::-webkit-scrollbar-thumb  { background: rgba(185,185,177,0.5); border-color: var(--surface3); }
+    .table-wrap::-webkit-scrollbar-thumb:hover { background: var(--accent); border-color: var(--surface3); }
+    .table-wrap::-webkit-scrollbar-corner { background: var(--surface3); }
   </style>
 </head>
 
